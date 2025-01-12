@@ -8,7 +8,7 @@
       </button>
     </div>
       <div>
-        <span class="text-white text-xl font-bold">InAir: UserName [Room-Name]</span>
+        <span class="text-white text-xl font-bold">InAir: {{data.userName}} [{{data.roomId}}]</span>
       </div>
     <div class="flex items-center">
       <img [src]="logoUrl" alt="Company Logo" class="h-10 w-auto" (error)="handleImageError($event)">

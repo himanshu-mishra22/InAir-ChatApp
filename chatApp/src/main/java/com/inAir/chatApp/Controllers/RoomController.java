@@ -1,5 +1,6 @@
 package com.inAir.chatApp.Controllers;
 
+import com.inAir.chatApp.AppConstants;
 import com.inAir.chatApp.Entities.Message;
 import com.inAir.chatApp.Entities.Room;
 import com.inAir.chatApp.Repo.RoomRepo;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/rooms")
-@CrossOrigin("*")
+@CrossOrigin(AppConstants.FRONT_END_URL)
 public class RoomController {
 
     private RoomRepo roomRepo;

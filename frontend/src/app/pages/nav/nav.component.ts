@@ -10,16 +10,16 @@ import { Location } from "@angular/common";
   styleUrl: './nav.component.css'
 })
 export class NavComponent {
-  logoUrl: string = "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg";
-
   constructor(private location: Location) {}
-
-  ngOnInit(): void {}
+  logoUrl: string = "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg";
+  
+  data =  JSON.parse(window.localStorage.getItem('joinRoom') || '{}');
+  
 
   goBack(): void {
     this.location.back();
+    window.localStorage.removeItem('joinRoom');
   }
-
   handleImageError(event: any): void {
     event.target.src = "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg";
   }

@@ -1,16 +1,17 @@
 import { CommonModule} from '@angular/common';
 import { format } from 'date-fns';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NavComponent } from '../nav/nav.component';
+import { ActivatedRoute } from '@angular/router';
+import { ChatService } from '../../Services/chat/chat.service';
+import { MessagesService } from '../../Services/Messages/messages.service';
+
 
 interface Message {
-  id: number;
   content: string;
-  timestamp: number;
-  isUser: boolean;
-  userName: string;
-  avatar: string;
+  time: Date;
+  sender: string;
 }
 
 @Component({
@@ -20,32 +21,57 @@ interface Message {
   templateUrl: './chats.component.html',
   styleUrl: './chats.component.css'
 })
-export class ChatsComponent {
-  messages: Message[] = [
-    { id: 1, content: 'How do we handle this deployment error?', timestamp: Date.now(), isUser: true, userName: 'You', avatar: 'https://via.placeholder.com/150' },
-    { id: 2, content: 'Try checking the server configurations.', timestamp: Date.now(), isUser: false, userName: 'Jane Doe', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTF8fHVzZXIlMjBwcm9maWxlfGVufDB8fDB8fHww' },
-    { id: 3, content: 'I think there might be an issue with our CDN configuration.', timestamp: Date.now(), isUser: true, userName: 'You', avatar: 'https://via.placeholder.com/150' },
-    { id: 4, content: "Yes, James is right. Let's check that as well.", timestamp: Date.now(), isUser: false, userName: 'Emily White', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTh8fHVzZXIlMjBwcm9maWxlfGVufDB8fDB8fHww' },
-    { id: 5, content: 'Deployment error fixed. Good job, team!', timestamp: Date.now(), isUser: false, userName: 'Michael Brown', avatar: 'https://images.unsplash.com/photo-1584999734482-0361aecad844?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzV8fHVzZXIlMjBwcm9maWxlfGVufDB8fDB8fHww' },
-  ];
-
+export class ChatsComponent implements OnInit,OnDestroy {
+  constructor(private _route: ActivatedRoute,
+              private _chat: ChatService,
+              private _message: MessagesService) { }
+  
+  roomId:any
+  username = JSON.parse(window.localStorage.getItem('joinRoom') || '{}');
   newMessage: string = '';
+  messages: Message[] = [];
+  isUser?= false;
+
+
+  ngOnInit(): void {
+    this.roomId = this._route.snapshot.params['roomId'];
+    this._chat.connect(this.roomId,(message)=>{
+      this.messages = [...this.messages, message];
+    })
+
+    this.fetchMessages();
+  }
+
+
+  fetchMessages() {
+    this._message.getMessages(this.roomId).subscribe((data: any) => {
+      this.messages = data;
+    });
+  }
 
   sendMessage(): void {
     if (!this.newMessage.trim()) return;
-    const newMsg: Message = {
-      id: this.messages.length + 1,
-      content: this.newMessage,
-      timestamp: Date.now(),
-      isUser: true,
-      userName: 'You',
-      avatar: 'https://via.placeholder.com/150',
-    };
-    this.messages = [...this.messages, newMsg];
+    else{
+      this.isUser = true;
+      this._chat.sendMessage(this.roomId, {
+        roomId: this.roomId,
+        content: this.newMessage,
+        sender: this.username.userName,
+      });
+      ;
+    }
+    this.isUser = false;
     this.newMessage = '';
+
   }
 
-  formatTimestamp(timestamp: number): string {
-    return format(new Date(timestamp), 'p');
+  formatTimestamp(timestamp: any): string {
+    if (!timestamp) return "Invalid time";
+    return format(new Date(timestamp), "HH:mm:ss"); 
+}
+
+
+  ngOnDestroy(): void {
+    this._chat.disconnect();
   }
 }

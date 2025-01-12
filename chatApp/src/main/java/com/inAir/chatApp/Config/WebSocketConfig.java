@@ -1,5 +1,6 @@
 package com.inAir.chatApp.Config;
 
+import com.inAir.chatApp.AppConstants;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -13,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // establishing connection through this endpoint
-        registry.addEndpoint("/chat").setAllowedOrigins("http://localhost:3000").withSockJS();
+        registry.addEndpoint("/chat").setAllowedOrigins(AppConstants.FRONT_END_URL).withSockJS();
     }
 
     @Override

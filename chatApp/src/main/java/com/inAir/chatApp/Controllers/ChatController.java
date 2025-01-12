@@ -1,6 +1,7 @@
 package com.inAir.chatApp.Controllers;
 
 
+import com.inAir.chatApp.AppConstants;
 import com.inAir.chatApp.Entities.Message;
 import com.inAir.chatApp.Entities.Room;
 import com.inAir.chatApp.Payload.MessageRequest;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDateTime;
 
 @Controller
-@CrossOrigin("*")
+@CrossOrigin(AppConstants.FRONT_END_URL)
 public class ChatController {
     private RoomRepo roomRepo;
 
@@ -28,7 +29,7 @@ public class ChatController {
     @SendTo("/topic/room/{roomId}")
     public Message sendMessage(
             @DestinationVariable String roomId,
-            @RequestBody MessageRequest request
+            MessageRequest request
     ){
         Room room = roomRepo.findByRoomId(request.getRoomId());
         Message message = new Message();
