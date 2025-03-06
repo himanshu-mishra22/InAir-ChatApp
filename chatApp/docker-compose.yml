@@ -1,4 +1,4 @@
-version: '3.8'
+
 services:
   mongo:
     image: mongo:5.0
@@ -10,12 +10,12 @@ services:
     networks:
       - app-network
   boot-app:
-    image: him2508/chatback:latest
+    image: him2508/chatbackend:latest
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - SPRING_DATA_MONGODB_URI = mongodb+srv://hotel:1234@cluster0.fjixz.mongodb.net/chatApp
+      - SPRING_DATA_MONGODB_URI = mongodb://mongo:27017/chatapp
     depends_on:
       - mongo
     networks:

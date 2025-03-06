@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = "http://localhost:8080";
+export const API_URL = "https://chatbackend-nkh3.onrender.com";
 export const httpClient = axios.create({
     baseURL: API_URL,
     
